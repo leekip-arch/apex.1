@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Logistics</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">Apex Logistics</h1>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <button class="header-btn" onclick="toggleForm('driver-signin-form')">Driver Sign-In</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Track Your Shipment</h2>
+            <p>Enter your tracking number below to track your parcel in real time.</p>
+
+            <!-- Tracking Form -->
+            <form class="hero-form" onsubmit="trackShipment(event)">
+                <input type="text" id="tracking-number" name="tracking-number" placeholder="Enter Tracking Number" required>
+                <button type="submit">Track</button>
+            </form>
+
+            <!-- Additional Buttons -->
+            <div class="form-toggle">
+                <button onclick="toggleForm('parcel-booking-form')">Enter Parcel Details</button>
+                <button onclick="toggleForm('quote-form')">Get a Quote</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hidden Forms -->
+    <section id="hidden-forms">
+        <!-- Parcel Booking Form -->
+        <div id="parcel-booking-form" class="hidden-form" style="display: none;">
+            <h2>Enter Parcel Details</h2>
+            <form id="parcel-details-form" onsubmit="submitParcelDetails(event)">
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" name="weight" step="0.01" required>
+
+                <label for="height">Height (cm):</label>
+                <input type="number" id="height" name="height" step="0.01" required>
+
+                <label for="width">Width (cm):</label>
+                <input type="number" id="width" name="width" step="0.01" required>
+
+                <label for="length">Length (cm):</label>
+                <input type="number" id="length" name="length" step="0.01" required>
+
+                <textarea name="description" id="description" placeholder="Describe your parcel" required></textarea>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <!-- Payment Section -->
+        <section id="payment-section" style="display: none;">
+            <div class="container">
+                <h2>Payment</h2>
+                <p id="calculated-price">Total Price: KES <span id="price">0.00</span></p>
+
+                <h3>Select Payment Method</h3>
+                <form id="payment-form" onsubmit="processPayment(event)">
+                    <label for="mpesa">M-Pesa:</label>
+                    <input type="radio" id="mpesa" name="payment-method" value="mpesa" required>
+                    <label for="mpesa">Pay with M-Pesa</label>
+
+                    <button type="submit">Pay Now</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Quote Form -->
+        <div id="quote-form" class="hidden-form" style="display: none;">
+            <h2>Get a Quote</h2>
+            <form class="hero-form" onsubmit="getQuote(event)">
+                <input type="text" id="sender-address" name="sender-address" placeholder="Sender's Address" required>
+                <input type="text" id="receiver-address" name="receiver-address" placeholder="Receiver's Address" required>
+                <input type="text" id="package-weight" name="package-weight" placeholder="Package Weight (kg)" required>
+                <textarea id="additional-details" name="additional-details" placeholder="Additional Details"></textarea>
+                <button type="submit">Request Quote</button>
+            </form>
+        </div>
+
+        <!-- Driver Sign-In Form -->
+        <div id="driver-signin-form" class="hidden-form" style="display: none;">
+            <h2>Driver Sign-In</h2>
+            <form class="hero-form" onsubmit="submitDriverInfo(event)">
+                <div class="form-row">
+                    <input type="text" id="first-name" name="first-name" placeholder="First Name" required>
+                    <input type="text" id="last-name" name="last-name" placeholder="Last Name" required>
+                </div>
+                <div class="form-row">
+                    <input type="tel" id="phone-number" name="phone-number" placeholder="Phone Number" required>
+                    <input type="text" id="id-number" name="id-number" placeholder="ID Number" required>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="county" name="county" placeholder="County of Residence" required>
+                    <input type="text" id="ward" name="ward" placeholder="Residential Ward" required>
+                </div>
+                <input type="text" id="apartment-name" name="apartment-name" placeholder="Apartment Name" required>
+                <button type="submit">Next: Vehicle Information</button>
+            </form>
+        </div>
+
+        <!-- Vehicle Information Form -->
+        <div id="vehicle-info-form" class="hidden-form" style="display: none;">
+            <h2>Vehicle Information</h2>
+            <form class="hero-form" onsubmit="submitVehicleInfo(event)">
+                <div class="form-row">
+                    <input type="text" id="car-make" name="car-make" placeholder="Car Make" required>
+                    <input type="text" id="car-model" name="car-model" placeholder="Car Model" required>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="vehicle-type" name="vehicle-type" placeholder="Vehicle Type" required>
+                    <input type="text" id="vehicle-color" name="vehicle-color" placeholder="Vehicle Color" required>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="vehicle-year" name="vehicle-year" placeholder="Year" required>
+                    <input type="text" id="license-plate-number" name="license-plate-number" placeholder="License Plate Number" required>
+                </div>
+                <input type="text" id="driver-license-number" name="driver-license-number" placeholder="Driver's License Number" required>
+                <button type="submit">Next: Review</button>
+            </form>
+        </div>
+
+        <!-- Review Form -->
+        <div id="review-form" class="hidden-form" style="display: none;">
+            <h2>Review Information</h2>
+            <p>Review all the details you have entered:</p>
+            <button type="submit">Submit</button>
+        </div>
+    </section>
+
+    <!-- Real-Time Orders Section -->
+    <section id="driver-orders">
+        <div class="container">
+            <h2>Available Orders</h2>
+            <div id="orders-list">
+                <!-- Real-time orders will be displayed here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <p>&copy; 2025 Apex Logistics. All rights reserved.</p>
+            <p>Contact us: <a href="mailto:info@apexlogistics.com">info@apexlogistics.com</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Function to toggle visibility of forms
+        function toggleForm(formId) {
+            const form = document.getElementById(formId);
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        }
+
+        // Function to send tracking number to the backend
+        async function trackShipment(event) {
+            event.preventDefault();
+            const trackingNumber = document.getElementById('tracking-number').value;
+            try {
+                const response = await fetch('/api/track', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ trackingNumber })
+                });
+                const result = await response.json();
+                alert(`Shipment status: ${result.status}`);
+            } catch (error) {
+                console.error('Error tracking shipment:', error);
+            }
+        }
+
+        // Function to submit parcel details
+        async function submitParcelDetails(event) {
+            event.preventDefault();
+            const formData = {
+                weight: document.getElementById('weight').value,
+                height: document.getElementById('height').value,
+                width: document.getElementById('width').value,
+                length: document.getElementById('length').value,
+                description: document.getElementById('description').value
+            };
+            try {
+                const response = await fetch('/api/parcel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+                document.getElementById('price').textContent = result.price;
+                toggleForm('payment-section');
+            } catch (error) {
+                console.error('Error submitting parcel details:', error);
+            }
+        }
+
+        // Function to process payment
+        async function processPayment(event) {
+            event.preventDefault();
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+            try {
+                const response = await fetch('/api/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ paymentMethod })
+                });
+                const result = await response.json();
+                alert(`Payment status: ${result.message}`);
+            } catch (error) {
+                console.error('Error processing payment:', error);
+            }
+        }
+
+        // Function to request a quote
+        async function getQuote(event) {
+            event.preventDefault();
+            const formData = {
+                senderAddress: document.getElementById('sender-address').value,
+                receiverAddress: document.getElementById('receiver-address').value,
+                packageWeight: document.getElementById('package-weight').value,
+                additionalDetails: document.getElementById('additional-details').value
+            };
+            try {
+                const response = await fetch('/api/quote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+                alert(`Quote: KES ${result.quote}`);
+            } catch (error) {
+                console.error('Error getting quote:', error);
+            }
+        }
+
+        // Function to submit driver info
+        async function submitDriverInfo(event) {
+            event.preventDefault();
+            const formData = {
+                firstName: document.getElementById('first-name').value,
+                lastName: document.getElementById('last-name').value,
+                phoneNumber: document.getElementById('phone-number').value,
+                idNumber: document.getElementById('id-number').value,
+                county: document.getElementById('county').value,
+                ward: document.getElementById('ward').value,
+                apartmentName: document.getElementById('apartment-name').value
+            };
+            try {
+                const response = await fetch('/api/driver', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+                alert(result.message);
+                toggleForm('vehicle-info-form');
+            } catch (error) {
+                console.error('Error submitting driver info:', error);
+            }
+        }
+
+        // Function to submit vehicle info
+        async function submitVehicleInfo(event) {
+            event.preventDefault();
+            const formData = {
+                carMake: document.getElementById('car-make').value,
+                carModel: document.getElementById('car-model').value,
+                vehicleType: document.getElementById('vehicle-type').value,
+                vehicleColor: document.getElementById('vehicle-color').value,
+                vehicleYear: document.getElementById('vehicle-year').value,
+                licensePlateNumber: document.getElementById('license-plate-number').value,
+                driverLicenseNumber: document.getElementById('driver-license-number').value
+            };
+            try {
+                const response = await fetch('/api/vehicle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+                alert(result.message);
+                toggleForm('review-form');
+            } catch (error) {
+                console.error('Error submitting vehicle info:', error);
+            }
+        }
+    </script>
+</body>
+</html>
